@@ -12,6 +12,11 @@ public class PuzzlePieceController : MonoBehaviour {
     public float maxHintSize;
     public float hintLifetime;
 
+    public float jumpMinTime;
+    public float jumpMaxTime;
+    public float jumpForce;
+    private float nextJump = 0;
+
     private int holding = 0;
 
     [HideInInspector]
@@ -26,11 +31,18 @@ public class PuzzlePieceController : MonoBehaviour {
             ps.startSize = 0f;
             ps.startLifetime = hintLifetime;
         }
+        nextJump = Random.Range(jumpMinTime, jumpMaxTime);
     }
 	
 	// Update is called once per frame
 	void Update () {
-        
+        if (!complete && holding <= 0 && Time.time > nextJump)
+        {
+            Debug.Log("JUMP!");
+            GetComponent<Rigidbody2D>().AddForce(new Vector2(0, -jumpForce));
+            GetComponent<Rigidbody2D>().AddTorque(Random.Range(-jumpForce, jumpForce));
+            nextJump = Time.time + Random.Range(jumpMinTime, jumpMaxTime);
+        }
 	}
 
     public void pickedUp()
@@ -58,7 +70,6 @@ public class PuzzlePieceController : MonoBehaviour {
             {
                 ps.startSize = hintSize;
             }
-            Debug.Log(difference);
         }
     }
 
